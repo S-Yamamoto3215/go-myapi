@@ -24,13 +24,19 @@ func PostArticleHandler(w http.ResponseWriter, req *http.Request) {
 	}
 	reqBodybuffer := make([]byte, length)
 
-	if _, err := req.Body.Read(reqBodybuffer); !errors.IS(err, io.EOF) {
+	if _, err := req.Body.Read(reqBodybuffer); !errors.Is(err, io.EOF) {
 		http.Error(w, "fail to get request body\n", http.StatusBadRequest)
 		return
 	}
 	defer req.Body.Close()
 
-	article := models.Article1
+	var reqArticle models.Article
+	if err := json.Unmarshal(reqBodybuffer, &reqArticle); err != nil {
+		http.Error(w, "fail to decode json\n", http.StatusBadRequest)
+		return
+	}
+
+	article := reqArticle
 	jsonData, err := json.Marshal(article)
 	if err != nil {
 		http.Error(w, "fail to encode json\n", http.StatusInternalServerError)
