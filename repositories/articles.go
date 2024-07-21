@@ -6,6 +6,10 @@ import (
 	"github.com/S-Yamamoto3215/go-myapi/models"
 )
 
+const (
+	articleNumPerPage = 5
+)
+
 func InsertArticle(db *sql.DB, article models.Article) (models.Article, error) {
 	const sqlStr = `
 	INSERT INTO articles (title, contents, username, nice, created_at) VALUES
@@ -25,9 +29,27 @@ func InsertArticle(db *sql.DB, article models.Article) (models.Article, error) {
 	return newArticle, nil
 }
 
-// TODO: 変数 page で指定されたページに表示する投稿一覧をデータベースから取得する関数。取得した記事データと発生したエラーを返す
-func SelectArticleList() ([]models.Article, error) {
-	return []models.Article{}, nil
+func SelectArticleList(db *sql.DB, page int) ([]models.Article, error) {
+	const sqlStr = `
+		SELECT article_id, title, contents, username, nice
+		from articles
+		limit ? ofset ?;
+	`
+
+	rows, err := db.Query(sqlStr, articleNumPerPage, ((page - 1) * articleNumPerPage))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	articleArray := make([]models.Article, 0)
+	for rows.Next() {
+		var article models.Article
+		rows.Scan(&article.ID, &article.Title, &article.Contents, &article.UserName, &article.NiceNum)
+		articleArray = append(articleArray, article)
+	}
+
+	return articleArray, nil
 }
 
 // TODO: 投稿IDを指定して記事データを取得。取得した記事データと発生したエラーを返す
