@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/S-Yamamoto3215/go-myapi/handlers"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 )
 
