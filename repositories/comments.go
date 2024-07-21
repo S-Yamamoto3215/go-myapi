@@ -26,7 +26,25 @@ func InsertComment(db *sql.DB, comment models.Comment) (models.Comment, error) {
 	return newComment, nil
 }
 
-// TODO: 指定IDの記事についたコメント一覧を取得。取得したコメントデータと発生したエラーを返す
-func SelectCommentList() ([]models.Comment, error) {
-	return []models.Comment{}, nil
+func SelectCommentList(db *sql.DB, articleID int) ([]models.Comment, error) {
+	const sqlStr = `
+		SELECT *
+		from comments
+		where article_id = ?;
+	`
+
+	rows, err := db.Query(sqlStr, articleID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	commentArray := make([]models.Comment, 0)
+	for rows.Next() {
+		var comment models.Comment
+		rows.Scan(&comment.CommentID, &comment.AritcleID, &comment.Message, &comment.CreatedAt)
+		commentArray = append(commentArray, comment)
+	}
+
+	return commentArray, nil
 }
