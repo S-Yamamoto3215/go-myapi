@@ -23,7 +23,6 @@ func TestSelectArticleDetail(t *testing.T) {
 	}
 	defer db.Close()
 
-	// 1. 期待する値を定義
 	expected := models.Article{
 		ID:       1,
 		Title:    "firstPost",
@@ -32,13 +31,11 @@ func TestSelectArticleDetail(t *testing.T) {
 		NiceNum:  2,
 	}
 
-	// 2. テスト対象の関数を実行。結果がgotに格納される
 	got, err := repositories.SelectArticleDetail(db, expected.ID)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	// 3. gotとexpectedを比較
 	if got.ID != expected.ID {
 		t.Errorf("ID: get %d but want %d\n", got.ID, expected.ID)
 	}
