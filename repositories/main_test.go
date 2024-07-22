@@ -8,16 +8,30 @@ import (
 	"testing"
 
 	_ "github.com/go-sql-driver/mysql"
+
+	"github.com/joho/godotenv"
 )
 
 var testDB *sql.DB
 
 var (
-	dbUser     = "root"
-	dbPassword = ""
-	dbDatabase = "test_my_go_api"
-	dbConn     = fmt.Sprintf("%s:%s@tcp(127.0.0.1:3306)/%s?parseTime=true", dbUser, dbPassword, dbDatabase)
+	dbUser     string
+	dbPassword string
+	dbDatabase string
+	dbConn     string
 )
+
+func init() {
+	err := godotenv.Load("../.env")
+	if err != nil {
+		fmt.Println("Error loading .env file")
+	}
+
+	dbUser = os.Getenv("DB_USER")
+	dbPassword = os.Getenv("DB_PASSWORD")
+	dbDatabase = os.Getenv("DB_TEST_NAME")
+	dbConn = fmt.Sprintf("%s:%s@tcp(127.0.0.1:3306)/%s?parseTime=true", dbUser, dbPassword, dbDatabase)
+}
 
 func connectDB() error {
 	var err error
