@@ -97,3 +97,6 @@ func TestInsertArticle(t *testing.T) {
 		testDB.Exec(sqlStr, article.Title, article.Contents, article.UserName)
 	})
 }
+
+func TestUpdateNiceNum(t *testing.T) {
+}
