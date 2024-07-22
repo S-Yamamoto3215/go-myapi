@@ -12,8 +12,10 @@ const (
 
 func InsertArticle(db *sql.DB, article models.Article) (models.Article, error) {
 	const sqlStr = `
-	INSERT INTO articles (title, contents, username, nice, created_at) VALUES
-	(?, ?, ?, 0, NOW())`
+		insert into
+			articles (title, contents, username, nice, created_at)
+			values (?, ?, ?, 0, now());
+		`
 
 	var newArticle models.Article
 	newArticle.Title, newArticle.Contents, newArticle.UserName = article.Title, article.Contents, article.UserName
@@ -31,9 +33,9 @@ func InsertArticle(db *sql.DB, article models.Article) (models.Article, error) {
 
 func SelectArticleList(db *sql.DB, page int) ([]models.Article, error) {
 	const sqlStr = `
-		SELECT article_id, title, contents, username, nice
-		from articles
-		limit ? ofset ?;
+		select article_id, title, contents, username, nice
+			from articles
+			limit ? offset ?;
 	`
 
 	rows, err := db.Query(sqlStr, articleNumPerPage, ((page - 1) * articleNumPerPage))
@@ -54,9 +56,9 @@ func SelectArticleList(db *sql.DB, page int) ([]models.Article, error) {
 
 func SelectArticleDetail(db *sql.DB, articleID int) (models.Article, error) {
 	const sqlStr = `
-		SELECT *
-		from articles
-		where article_id = ?;
+		select *
+			from articles
+			where article_id = ?;
 	`
 
 	row := db.QueryRow(sqlStr, articleID)
@@ -85,9 +87,9 @@ func UpdateNiceNum(db *sql.DB, articleID int) error {
 	}
 
 	const sqlGetNice = `
-		SELECT nice
-		from articles
-		where article_id = ?;
+		select nice
+			from articles
+			where article_id = ?;
 	`
 	row := tx.QueryRow(sqlGetNice, articleID)
 	if err := row.Err(); err != nil {
@@ -102,8 +104,7 @@ func UpdateNiceNum(db *sql.DB, articleID int) error {
 		return err
 	}
 
-	// 取得した記事のイイネ数を更新する
-	const sqlUpdateNice = `update articles set nice = ? where article_id = ?;`
+	const sqlUpdateNice = `update articles set nice = ? where article_id = ?`
 	_, err = tx.Exec(sqlUpdateNice, nicenum+1, articleID)
 	if err != nil {
 		tx.Rollback()
