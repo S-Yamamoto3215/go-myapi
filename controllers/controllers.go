@@ -19,7 +19,7 @@ func NewMyAppController(s *services.MyAppService) *MyAppController {
 	return &MyAppController{service: s}
 }
 
-func HelloHandler(w http.ResponseWriter, req *http.Request) {
+func (c *MyAppController) HelloHandler(w http.ResponseWriter, req *http.Request) {
 	io.WriteString(w, "Hello, world!\n")
 }
 

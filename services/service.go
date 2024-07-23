@@ -6,6 +6,6 @@ type MyAppService struct {
 	db *sql.DB
 }
 
-func NewMyAppSrvice(db *sql.DB) *MyAppService {
+func NewMyAppService(db *sql.DB) *MyAppService {
 	return &MyAppService{db: db}
 }
