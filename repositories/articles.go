@@ -12,10 +12,9 @@ const (
 
 func InsertArticle(db *sql.DB, article models.Article) (models.Article, error) {
 	const sqlStr = `
-		insert into
-			articles (title, contents, username, nice, created_at)
-			values (?, ?, ?, 0, now());
-		`
+	insert into articles (title, contents, username, nice, created_at) values
+	(?, ?, ?, 0, now());
+	`
 
 	var newArticle models.Article
 	newArticle.Title, newArticle.Contents, newArticle.UserName = article.Title, article.Contents, article.UserName
@@ -26,6 +25,7 @@ func InsertArticle(db *sql.DB, article models.Article) (models.Article, error) {
 	}
 
 	id, _ := result.LastInsertId()
+
 	newArticle.ID = int(id)
 
 	return newArticle, nil
@@ -34,8 +34,8 @@ func InsertArticle(db *sql.DB, article models.Article) (models.Article, error) {
 func SelectArticleList(db *sql.DB, page int) ([]models.Article, error) {
 	const sqlStr = `
 		select article_id, title, contents, username, nice
-			from articles
-			limit ? offset ?;
+		from articles
+		limit ? offset ?;
 	`
 
 	rows, err := db.Query(sqlStr, articleNumPerPage, ((page - 1) * articleNumPerPage))
@@ -48,6 +48,7 @@ func SelectArticleList(db *sql.DB, page int) ([]models.Article, error) {
 	for rows.Next() {
 		var article models.Article
 		rows.Scan(&article.ID, &article.Title, &article.Contents, &article.UserName, &article.NiceNum)
+
 		articleArray = append(articleArray, article)
 	}
 
@@ -57,10 +58,9 @@ func SelectArticleList(db *sql.DB, page int) ([]models.Article, error) {
 func SelectArticleDetail(db *sql.DB, articleID int) (models.Article, error) {
 	const sqlStr = `
 		select *
-			from articles
-			where article_id = ?;
+		from articles
+		where article_id = ?;
 	`
-
 	row := db.QueryRow(sqlStr, articleID)
 	if err := row.Err(); err != nil {
 		return models.Article{}, err
@@ -88,8 +88,8 @@ func UpdateNiceNum(db *sql.DB, articleID int) error {
 
 	const sqlGetNice = `
 		select nice
-			from articles
-			where article_id = ?;
+		from articles
+		where article_id = ?;
 	`
 	row := tx.QueryRow(sqlGetNice, articleID)
 	if err := row.Err(); err != nil {

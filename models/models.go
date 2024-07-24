@@ -1,8 +1,6 @@
 package models
 
-import (
-	"time"
-)
+import "time"
 
 type Comment struct {
 	CommentID int       `json:"comment_id"`

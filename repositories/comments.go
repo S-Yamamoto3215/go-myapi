@@ -8,11 +8,9 @@ import (
 
 func InsertComment(db *sql.DB, comment models.Comment) (models.Comment, error) {
 	const sqlStr = `
-		insert into
-			comments (article_id, message, created_at)
-			values (?, ?, now());
+		insert into comments (article_id, message, created_at) values
+		(?, ?, now());
 	`
-
 	var newComment models.Comment
 	newComment.ArticleID, newComment.Message = comment.ArticleID, comment.Message
 
@@ -30,8 +28,8 @@ func InsertComment(db *sql.DB, comment models.Comment) (models.Comment, error) {
 func SelectCommentList(db *sql.DB, articleID int) ([]models.Comment, error) {
 	const sqlStr = `
 		select *
-			from comments
-			where article_id = ?;
+		from comments
+		where article_id = ?;
 	`
 
 	rows, err := db.Query(sqlStr, articleID)
